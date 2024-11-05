@@ -92,6 +92,14 @@ namespace SIPSorcery.net.RTP
 
                 try
                 {
+                    if (LocalTrack.TimeOffset != null) {
+                        TimeSpan difference = DateTime.Now - LocalTrack.TimeOffset.Value;
+                        double offset = (difference.TotalMilliseconds - 20d) / 20d;
+                        if (offset >= 1d) {
+                            LocalTrack.Timestamp += duration * (uint)offset;
+                        }
+                    }
+
                     // Basic RTP audio formats (such as G711, G722) do not have a concept of frames. The payload of the RTP packet is
                     // considered a single frame. This results in a problem is the audio frame being sent is larger than the MTU. In 
                     // that case the audio frame must be split across mutliple RTP packets. Unlike video frames theres no way to 
@@ -123,6 +131,7 @@ namespace SIPSorcery.net.RTP
                     }
 
                     LocalTrack.Timestamp += duration;
+                    LocalTrack.TimeOffset = DateTime.Now;
                 }
                 catch (SocketException sockExcp)
                 {

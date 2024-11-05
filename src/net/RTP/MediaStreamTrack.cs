@@ -137,7 +137,7 @@ namespace SIPSorcery.Net
         // The value used in the RTP Sequence Number header field for media packets.
         // Although valid values are all in the range of ushort, the underlying field is of type int, because Interlocked.CompareExchange is used to increment in a fast and thread-safe manner and there is no overload for ushort.
         private int m_seqNum;
-
+        public DateTime? TimeOffset { get; internal set; } = null;
         /// <summary>
         /// Creates a lightweight class to track a media stream track within an RTP session 
         /// When supporting RFC3550 (the standard RTP specification) the relationship between
