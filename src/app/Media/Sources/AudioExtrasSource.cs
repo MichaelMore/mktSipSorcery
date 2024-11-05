@@ -112,6 +112,7 @@ namespace SIPSorcery.Media
         private bool _isPaused;
         private bool _isClosed;
         private IAudioEncoder _audioEncoder;
+        private bool _isSendEnabled = true;
 
         // Fields for interrupting the main audio source with a different stream. For example playing
         // an announcement over music etc.
@@ -556,8 +557,7 @@ namespace SIPSorcery.Media
 
         private void EncodeAndSend(short[] pcm, int pcmSampleRate)
         {
-            if (pcm.Length > 0)
-            {
+            if (_isSendEnabled && (pcm.Length > 0)) {
                 if (pcmSampleRate != _audioFormatManager.SelectedFormat.ClockRate)
                 {
                     pcm = PcmResampler.Resample(pcm, pcmSampleRate, _audioFormatManager.SelectedFormat.ClockRate);
@@ -606,5 +606,17 @@ namespace SIPSorcery.Media
                 }
             }
         }
+
+        public void SendRaw(uint durationRtpUnits, byte[] sample) {
+            OnAudioSourceEncodedSample?.Invoke(durationRtpUnits, sample);
+        }
+
+        public bool IsSendEnabled {
+            get => _isSendEnabled;
+            set {
+                _isSendEnabled = value;
+            }
+        }
+
     }
 }
